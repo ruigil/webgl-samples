@@ -18,8 +18,6 @@ animate();
 
 function init() {
 
-   // http://www.humus.name/index.php?page=Textures&ID=77
-
    // we create a perspective camera to our world
    camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 100000 );
    camera.position.z = -5000;
