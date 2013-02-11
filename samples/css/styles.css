@@ -7,3 +7,43 @@ body {
 	margin: 0px;
 	padding: 0px;
 }
+
+#info {
+	font-family: Monospace;
+	padding: 0px 10px 10px 10px;
+	position: absolute;
+	top: 0px;
+	left: 10px;
+	background: #000;
+	color: white;
+	background: rgb(0, 0, 0);
+	/* RGBa with 0.6 opacity */
+	background: rgba(0, 0, 0, 0.6);	
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";
+	/* rounded corners */
+ 	-moz-border-radius: 0px 0px 10px 10px;
+    -webkit-border-radius: 0px 0px 10px 10px;
+    -khtml-border-radius: 0px 0px 10px 10px;
+    border-radius: 0px 0px 10px 10px;	
+}
+
+#info h1 {
+	margin: 0px;
+	font-size: 14px;
+	border-bottom: 1px dotted #999;
+}
+
+#info a {
+	color: #f00;
+	text-decoration: none;
+}
+
+#info p {
+	font-size: 12px;
+	line-height: 10px;
+}
+
+#info #content {
+	display: none;
+}
