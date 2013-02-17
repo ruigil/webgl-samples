@@ -13,7 +13,7 @@ var geometry, material;
 var poolMesh;
 // the water object with the wavefield algorithm
 var water;
-// the wave field is 100 grid segment size
+// the wave field is a grid with 100 segments
 var segments = 100;
 
 var mouseX = 0, mouseY = 0;
@@ -69,36 +69,16 @@ function init() {
 
    // texture for the building walls
    var texture = THREE.ImageUtils.loadTexture( "textures/highrise.jpg" );
-   material = new THREE.MeshBasicMaterial( { color: 0x999999, map: texture } );   
+   var wmaterial = new THREE.MeshBasicMaterial( { color: 0x999999, map: texture } );   
 
    // north
-   var pgeometry = new THREE.PlaneGeometry( 5000, 5000);
-   pgeometry.applyMatrix( new THREE.Matrix4().makeRotationX( 0 ) ); 
-   var wMesh = new THREE.Mesh( pgeometry, material );
-   wMesh.position.z = 2500;
-   wMesh.position.y = -2500;
-   scene.add( wMesh );
+   makeWall(0,2500,0,wmaterial);
    // south
-   var pgeometry = new THREE.PlaneGeometry( 5000, 5000);
-   pgeometry.applyMatrix( new THREE.Matrix4().makeRotationY( Math.PI ) ); 
-   var wMesh = new THREE.Mesh( pgeometry, material );
-   wMesh.position.z = -2500;
-   wMesh.position.y = -2500;
-   scene.add( wMesh );
+   makeWall(0,-2500,Math.PI,wmaterial);
    // east
-   var pgeometry = new THREE.PlaneGeometry( 5000, 5000);
-   pgeometry.applyMatrix( new THREE.Matrix4().makeRotationY( Math.PI/2 ) ); 
-   var wMesh = new THREE.Mesh( pgeometry, material );
-   wMesh.position.x = 2500;
-   wMesh.position.y = -2500;
-   scene.add( wMesh );
+   makeWall(2500,0,Math.PI/2,wmaterial);
    // west
-   var pgeometry = new THREE.PlaneGeometry( 5000, 5000);
-   pgeometry.applyMatrix( new THREE.Matrix4().makeRotationY( -Math.PI/2 ) ); 
-   var wMesh = new THREE.Mesh( pgeometry, material );
-   wMesh.position.x = -2500;
-   wMesh.position.y = -2500;
-   scene.add( wMesh );
+   makeWall(-2500,0,-Math.PI/2,wmaterial);
 
    // ad an ambient light
    scene.add( new THREE.AmbientLight( 0xffffff ) );
@@ -145,16 +125,27 @@ function init() {
 
 }
 
+function makeWall(offsetx,offsetz,rotation,wmaterial) {
+   var pgeometry = new THREE.PlaneGeometry( 5000, 5000);
+   pgeometry.applyMatrix( new THREE.Matrix4().makeRotationY( rotation ) ); 
+   var wMesh = new THREE.Mesh( pgeometry, wmaterial );
+   wMesh.position.x = offsetx;
+   wMesh.position.z = offsetz;
+   wMesh.position.y = -2500;
+   scene.add( wMesh );
+}
+
 function onDocumentMouseMove(event) {
    mouseX = ( event.clientX - ( window.innerWidth/2 ) ) * 8;
    mouseY = ( event.clientY - ( window.innerHeight/2 ) ) * 8;
 }
 
 function onDocumentMouseDown(event) {
+   event.preventDefault();
    side = -side;
 
    // so we pick the mouse coordinates and normalize them 
-   // to a coordinate ystem from -1 to 1
+   // to a coordinate system from -1 to 1
    var xx = ( event.clientX / window.innerWidth ) * 2 - 1;
    var yy = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
@@ -162,10 +153,13 @@ function onDocumentMouseDown(event) {
    var vector = new THREE.Vector3( xx, yy, 1 );
    // and build a ray caster with the vector.
    // the raycaster projects an imaginary line in the scene.
+   // it multiplies the vector by an inverse transformation of the model view projection matrix
    var raycaster = projector.pickingRay( vector, camera );
 
    // and calculate intersections with objects in the scene
    var intersects = raycaster.intersectObjects( scene.children );
+
+   var segmentSize = (5000/segments);
 
    // if we find an intersection
    if ( intersects.length > 0 ) {
@@ -173,10 +167,10 @@ function onDocumentMouseDown(event) {
          intersector = intersects[ i ];
          // and it is the pool surface
          if ( intersector.object == poolMesh ) {
-            var i = Math.floor(intersector.point.x/50) + 50;
-            var j = Math.floor(intersector.point.z/50) + 50;
-            // we use the intersection point to index the segment in the 
-            // wave field and add an oscilator, with a short time to live.
+            // we use the intersection point to index the segment in the wave field
+            var i = Math.floor(intersector.point.x/segmentSize) + (segments/2);
+            var j = Math.floor(intersector.point.z/segmentSize) + (segments/2);
+            // and add an oscilator there, with a short time to live.
             water.addOscilator({ox: i-1, oy: j-1, step: Math.PI/10, ttl: 6});
          }
       }
@@ -216,7 +210,7 @@ function animate() {
 
    // we must render the background first!
    renderer.render( sceneCube, cameraCube );
-   // and then render the scene with the cubes.
+   // and then render the scene.
    renderer.render( scene, camera );
 
 }
