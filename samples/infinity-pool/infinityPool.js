@@ -170,8 +170,8 @@ function onDocumentMouseDown(event) {
             // we use the intersection point to index the segment in the wave field
             var i = Math.floor(intersector.point.x/segmentSize) + (segments/2);
             var j = Math.floor(intersector.point.z/segmentSize) + (segments/2);
-            // and add an oscilator there, with a short time to live.
-            water.addOscilator({ox: i-1, oy: j-1, step: Math.PI/10, ttl: 6});
+            // and add an oscillator there, with a short time to live.
+            water.addOscillator({ox: i-1, oy: j-1, step: Math.PI/10, ttl: 6});
          }
       }
    }   

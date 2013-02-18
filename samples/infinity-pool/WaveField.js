@@ -9,7 +9,7 @@ var WaveField = function (options) {
     var waveSpeed = options.waveSpeed || 0.2;
     var damping = options.damping || 0.01;
     var heightField = [2];
-    var oscilators = [];
+    var oscillators = [];
     var page = 0;
 
     // init heigh field
@@ -24,8 +24,8 @@ var WaveField = function (options) {
         }
     };
 
-    // an oscilator is just a way to create a perturbation in the wave field
-    var Oscilator = function (options) {
+    // an oscillator is just a way to create a perturbation in the wave field
+    var Oscillator = function (options) {
         var phase = Math.PI;
 
         return {
@@ -46,10 +46,10 @@ var WaveField = function (options) {
     return {
         update: function() {
             // we just tick the oscilators, and remove them if they're dead
-            var i = oscilators.length;
+            var i = oscillators.length;
             while (i--) {
-                if (!oscilators[i].dead) oscilators[i].tick();
-                else oscilators.splice(i,1);
+                if (!oscillators[i].dead) oscillators[i].tick();
+                else oscillators.splice(i,1);
             } 
             var currentField = heightField[page];
             var previousField = heightField[page^1];
@@ -69,8 +69,8 @@ var WaveField = function (options) {
         get: function (x,y) {
             return heightField[page][x][y];
         },
-        addOscilator: function (options) {
-            oscilators.push(new Oscilator(options));
+        addOscillator: function (options) {
+            oscillators.push(new Oscillator(options));
         },
         dump: function() {
             var i = j = 0;
